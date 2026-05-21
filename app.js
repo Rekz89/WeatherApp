@@ -72,7 +72,7 @@ const renderChart = (data, type) => {
     humidity: {label:'%', values:data.hourly.relative_humidity_2m.slice(0,12), color:'#a78bfa'},
     pressure: {label:'hPa', values:data.hourly.pressure_msl.slice(0,12).map(v=>Math.round(v)), color:'#f472b6'}
   };
-  const ds = datasets[type];
+  const ds = datasets[type] || datasets.temp;
   chart = new Chart(dom.chart, {
     type:'line',
     data:{labels, datasets:[{label:ds.label, data:ds.values, borderColor:ds.color, backgroundColor:`${ds.color}33`, fill:true, tension:.4, pointRadius:3}]},
@@ -165,7 +165,18 @@ dom.retry.addEventListener('click', () => state.lat ? fetchWeather(state.lat, st
 dom.tabs.forEach(tab => tab.addEventListener('click', () => {
   dom.tabs.forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
-  if(state.lat) fetch(`${API}?latitude=${state.lat}&longitude=${state.lon}&hourly=temperature_2m,relative_humidity_2m,pressure_msl&timezone=auto`).then(r=>r.json()).then(d=>renderChart(d, tab.dataset.type));
+  if(!state.lat) return;
+  fetch(`${API}?latitude=${state.lat}&longitude=${state.lon}&hourly=temperature_2m,relative_humidity_2m,pressure_msl&timezone=auto`)
+    .then(r => {
+      if(!r.ok) throw new Error('Trend data unavailable');
+      return r.json();
+    })
+    .then(d => renderChart(d, tab.dataset.type))
+    .catch(err => {
+      console.error(err);
+      dom.errMsg.textContent = 'Trend update failed';
+      show('error');
+    });
 }));
 
 // PWA
