@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cinematic Weather App powered by Open-Meteo">
+  <meta name="theme-color" content="#0f172a">
+  <title>🌤️ CineWeather</title>
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  
+  <!-- Fonts & Chart.js -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  
+  <!-- Cinematic Background -->
+  <div id="bg" class="bg-layer"></div>
+  <canvas id="weather-canvas"></canvas>
+  <div class="bg-overlay"></div>
+
+  <main id="main" class="app">
+    <header class="header">
+      <h1 class="logo">🌤️ CineWeather</h1>
+      <form id="search" class="search" role="search">
+        <label for="city" class="sr-only">Search location</label>
+        <input type="text" id="city" placeholder="Enter city or coordinates..." autocomplete="off" required>
+        <button type="submit" aria-label="Search">🔍</button>
+      </form>
+      <button id="geo" aria-label="Use my location">📍</button>
+    </header>
+
+    <section id="content" class="content" aria-live="polite">
+      <div id="loader" hidden>
+        <div class="spinner"></div>
+        <p>Fetching cinematic weather...</p>
+      </div>
+      
+      <div id="error" hidden>
+        <p>⚠️ <span id="err-msg">Something went wrong</span></p>
+        <button id="retry">Try Again</button>
+      </div>
+
+      <article id="weather" hidden>
+        <div class="current">
+          <h2 id="location">--</h2>
+          <p id="time">--</p>
+          <div class="temp-box">
+            <span id="temp" class="temp">--</span><span class="unit">°C</span>
+            <img id="icon" src="" alt="" width="80">
+          </div>
+          <p id="desc">--</p>
+          
+          <div class="metrics">
+            <div><span>Feels Like</span><strong id="feels">--</strong></div>
+            <div><span>Humidity</span><strong id="humidity">--%</strong></div>
+            <div><span>Wind</span><strong id="wind">-- km/h</strong></div>
+            <div><span>Pressure</span><strong id="pressure">-- hPa</strong></div>
+            <div><span>Visibility</span><strong id="visibility">-- km</strong></div>
+            <div><span>UV Index</span><strong id="uv">--</strong></div>
+          </div>
+        </div>
+
+        <div class="forecast">
+          <h3>5-Day Forecast</h3>
+          <div id="forecast-grid" class="grid"></div>
+        </div>
+
+        <div class="hourly">
+          <h3>Next 24 Hours</h3>
+          <div id="hourly-scroll" class="scroll"></div>
+        </div>
+
+        <section class="charts">
+          <h3>Trends</h3>
+          <div class="chart-tabs">
+            <button class="tab active" data-type="temp">Temperature</button>
+            <button class="tab" data-type="humidity">Humidity</button>
+            <button class="tab" data-type="pressure">Pressure</button>
+          </div>
+          <canvas id="chart"></canvas>
+        </section>
+      </article>
+    </section>
+
+    <footer>
+      <p>Data: <a href="https://open-meteo.com" target="_blank">Open-Meteo</a> • Backgrounds: Unsplash</p>
+      <button id="install" hidden>📲 Install App</button>
+    </footer>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
